@@ -16,26 +16,26 @@ import (
 )
 
 type cpuInfo struct {
-	Vcpus int `json:"vcpus"`
-	ModelName string `json:"modelName"`
-	CacheSize int32 `json:"cacheSize"`
-        Mhz float64 `json:"mhz"`
-        VendorID string `json:vendorID`
-	Sockets int `json:"sockets"`
-	Flags string `json:"flags"`
+	Vcpus int `json:"cpu_vcpus"`
+	ModelName string `json:"cpu_modelname"`
+	CacheSize int32 `json:"cpu_cachesize"`
+        Mhz float64 `json:"cpu_mhz"`
+        VendorID string `json:cpu_vendorid`
+	Sockets int `json:"cpu_sockets"`
+	Flags string `json:"cpu_flags"`
 }
 
 type memInfo struct {
-	MemTotal string `json:"memTotal"`
-	SwapMemTotal string `json:"swapMemTotal"`
+	MemTotal string `json:"mem_total"`
+	SwapMemTotal string `json:"swapmem_total"`
 }
 
 type diskInfo struct {
 	Device string `json:"device"`
 	Mountpoint string `json:"mountpoint"`
 	Fstype string `json:"fstype"`
-	Opts string `json:"diskOpts"`
-	TotalSize string `json:"diskTotalSize"`
+	Opts string `json:"disk_opts"`
+	TotalSize string `json:"disk_totalsize"`
 }
 
 type hostInfo struct {
