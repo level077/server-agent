@@ -40,7 +40,7 @@ type diskInfo struct {
 
 type hostInfo struct {
     Hostname             string `json:"hostname"`
-    BootTime             string `json:"bootTime"`
+    BootTime             string `json:"boot_time"`
     OS                   string `json:"os"`              // ex: freebsd, linux
     Platform             string `json:"platform"`        // ex: ubuntu, linuxmint
     PlatformFamily       string `json:"platform_family"`  // ex: debian, rhel
@@ -157,7 +157,7 @@ func getDmiFacts() map[string]string {
 		}
 		for k,v := range item {
 			//fmt.Printf("%s->%s\n",k,v)
-			df[k] = getFileContent(v)	
+			df[k] = strings.Trim(getFileContent(v)," ")	
 		}
 		return df
 	}	
