@@ -20,7 +20,7 @@ type cpuInfo struct {
 	ModelName string `json:"cpu_modelname"`
 	CacheSize int32 `json:"cpu_cachesize"`
         Mhz float64 `json:"cpu_mhz"`
-        VendorID string `json:cpu_vendorid`
+        VendorID string `json:"cpu_vendorid"`
 	Sockets int `json:"cpu_sockets"`
 	Flags string `json:"cpu_flags"`
 }
