@@ -49,10 +49,10 @@ type hostInfo struct {
     VirtualizationSystem string `json:"virtualization_system"`
     VirtualizationRole   string `json:"virtualization_role"` // guest or host
     HostID               string `json:"product_uuid"`             // ex: uuid
-    BiosDate		 string `json:bios_date`
-    ProductName	 	 string `json:product_name`
-    ProductSerial	 string `json:product_serial`
-    SystemVendor	 string `json:system_vendor`
+    BiosDate		 string `json:"bios_date"`
+    ProductName	 	 string `json:"product_name"`
+    ProductSerial	 string `json:"product_serial"`
+    SystemVendor	 string `json:"system_vendor"`
     DefaultIPV4          string `json:"default_ipv4"`
     DefaultIPV6          string `json:"default_ipv6"`
 }
