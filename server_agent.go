@@ -18,25 +18,27 @@ type serverInfo struct {
 	TimeStamp string `json:"@timestamp"`
 }
 
+type baseInfo struct {
+        HostID string `json:"product_uuid"`
+        Hostname string `json:"hostname"`
+        TimeStamp string `json:"@timestamp"`
+        DefaultIPV4 string `json:"default_ipv4"`
+        DefaultIPv6 string `json:"default_ipv6"`
+}
+
 type userInfo struct {
 	user_info.UserInfo
-	HostID string `json:"product_uuid"`	
-	Hostname string `json:"hostname"`
-	TimeStamp string `json:"@timestamp"`
+	baseInfo
 } 
 
 type processInfo struct {
 	process_info.ProcessInfo
-	HostID string `json:"product_uuid"`
-	Hostname string `json:"hostname"`
-	TimeStamp string `json:"@timestamp"`
+	baseInfo
 }
 
 type softwareInfo struct {
 	software_info.SoftwareInfo
-	HostID string `json:"product_uuid"`
-	Hostname string `json:"hostname"`
-	TimeStamp string `json:"@timestamp"`
+	baseInfo
 }
 
 type EsMeta struct {
@@ -87,6 +89,9 @@ func main() {
 	sInfo := server_info.GetServerInfo()
 	product_uuid := sInfo.HostID
 	hostname := sInfo.Hostname
+	default_ipv4 := sInfo.DefaultIPV4
+        default_ipv6 := sInfo.DefaultIPV6
+        bi := baseInfo{product_uuid,hostname,t,default_ipv4,default_ipv6}
 
 	tmpServerInfo := serverInfo{sInfo,t}
         serverInfoSend(esHost, esPort, "server","server",tmpServerInfo)
@@ -98,7 +103,7 @@ func main() {
 	}
 	var tmpUi []userInfo
 	for _, v := range ui {
-		tmpUi = append(tmpUi,userInfo{v,product_uuid,hostname,t})
+		tmpUi = append(tmpUi,userInfo{v,bi})
 	}
 	userInfoSend(esHost, esPort, "user","user",tmpUi)
 
@@ -110,12 +115,12 @@ func main() {
 	var tmpPi []processInfo
 	var tmpSi []softwareInfo
 	for _, v := range pi {
-		tmpPi = append(tmpPi, processInfo{v,product_uuid,hostname,t})
+		tmpPi = append(tmpPi, processInfo{v,bi})
 	} 
 	processInfoSend(esHost, esPort, "process","process",tmpPi)
 
 	for _, v := range si {
-		tmpSi = append(tmpSi, softwareInfo{v,product_uuid,hostname,t})
+		tmpSi = append(tmpSi, softwareInfo{v,bi})
 	}
 	softwareInfoSend(esHost, esPort, "software","software",tmpSi)
 }

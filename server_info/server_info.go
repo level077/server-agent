@@ -6,6 +6,7 @@ import (
 	"github.com/shirou/gopsutil/disk"
 	"github.com/shirou/gopsutil/net"
 	"github.com/shirou/gopsutil/host"
+	"github.com/progrium/go-shell"
 	"agent/utils"
 	"strings"
 	"time"
@@ -42,16 +43,18 @@ type hostInfo struct {
     BootTime             string `json:"bootTime"`
     OS                   string `json:"os"`              // ex: freebsd, linux
     Platform             string `json:"platform"`        // ex: ubuntu, linuxmint
-    PlatformFamily       string `json:"platformFamily"`  // ex: debian, rhel
-    PlatformVersion      string `json:"platformVersion"` // version of the complete OS
-    KernelVersion        string `json:"kernelVersion"`   // version of the OS kernel (if available)
-    VirtualizationSystem string `json:"virtualizationSystem"`
-    VirtualizationRole   string `json:"virtualizationRole"` // guest or host
-    HostID               string `json:"productUuid"`             // ex: uuid
-    BiosDate		 string `json:biosDate`
-    ProductName	 	 string `json:productName`
-    ProductSerial	 string `json:productSerial`
-    SystemVendor	 string `json:systemVendor`
+    PlatformFamily       string `json:"platform_family"`  // ex: debian, rhel
+    PlatformVersion      string `json:"platform_version"` // version of the complete OS
+    KernelVersion        string `json:"kernel_version"`   // version of the OS kernel (if available)
+    VirtualizationSystem string `json:"virtualization_system"`
+    VirtualizationRole   string `json:"virtualization_role"` // guest or host
+    HostID               string `json:"product_uuid"`             // ex: uuid
+    BiosDate		 string `json:bios_date`
+    ProductName	 	 string `json:product_name`
+    ProductSerial	 string `json:product_serial`
+    SystemVendor	 string `json:system_vendor`
+    DefaultIPV4          string `json:"default_ipv4"`
+    DefaultIPV6          string `json:"default_ipv6"`
 }
 
 type ServerInfo struct {
@@ -139,6 +142,7 @@ func getHostInfo() hostInfo {
 	hi.BiosDate = df["bios_date"]
 	hi.ProductSerial = df["product_serial"]
 	hi.SystemVendor = df["system_vendor"]	
+	hi.DefaultIPV4, hi.DefaultIPV6 = getDefaultIP()
 	return hi
 }
 
@@ -158,6 +162,38 @@ func getDmiFacts() map[string]string {
 		return df
 	}	
 	return nil
+}
+
+func getDefaultIP() (string,string) {
+        ipv4 := getIP("-4","8.8.8.8")
+        ipv6 := getIP("-6","2404:6800:400a:800::1012")
+        return ipv4, ipv6
+}
+
+func getIP(model string, dns string) string {
+        ipPath := getCommandPath("ip")
+        if ipPath == "NA" {
+                return "NA"
+        }
+        ipOut := strings.Trim(shell.Cmd(ipPath,model,"route","get",dns).Run().Stdout.String(),"\n")
+        ips := strings.Fields(ipOut)
+        if len(ips) >0 && ips[0] == dns {
+                for i, v := range ips {
+                        if v == "src" {
+                                return ips[i+1]
+                        }
+                }
+        }
+        return "NA"
+}
+
+func getCommandPath(cmd string) string {
+        which := shell.Cmd("which").OutputFn()
+        path, err := which(cmd)
+        if err != nil {
+                return "NA"
+        }
+        return path
 }
 
 func getFileContent(path string) string {
